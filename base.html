@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TKCS - Telegram Keyword Channel Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-full md:w-64 bg-white shadow-lg z-10">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-blue-600 flex items-center">
+                    <i class="fa-solid fa-satellite-dish mr-2"></i> TKCS
+                </h1>
+            </div>
+            <nav class="mt-6">
+                <a href="/"
+                    class="flex items-center py-3 px-6 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.url.path == '/' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% endif %}">
+                    <i class="fa-solid fa-chart-line w-5 mr-3"></i> Dashboard
+                </a>
+                <a href="/keywords"
+                    class="flex items-center py-3 px-6 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.url.path == '/keywords' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% endif %}">
+                    <i class="fa-solid fa-tags w-5 mr-3"></i> Keywords
+                </a>
+                <a href="/channels"
+                    class="flex items-center py-3 px-6 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.url.path == '/channels' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% endif %}">
+                    <i class="fa-solid fa-broadcast-tower w-5 mr-3"></i> Channels
+                </a>
+                <a href="/search"
+                    class="flex items-center py-3 px-6 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.url.path == '/search' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% endif %}">
+                    <i class="fa-solid fa-magnifying-glass w-5 mr-3"></i> Search
+                </a>
+                <a href="/stats/words"
+                    class="flex items-center py-3 px-6 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.url.path == '/stats/words' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% endif %}">
+                    <i class="fa-solid fa-chart-simple w-5 mr-3"></i> Statistics
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <header class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">{% block title %}Dashboard{% endblock %}</h2>
+                <div class="flex items-center gap-4">
+                    <button id="scanBtn" class="btn btn-primary shadow-lg">
+                        <i class="fa-solid fa-play mr-2"></i> Start Scan
+                    </button>
+                </div>
+            </header>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('scanBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('scanBtn');
+            btn.classList.add('loading');
+            try {
+                const response = await fetch('/api/scan/start', { method: 'POST' });
+                const data = await response.json();
+                alert('Scan started successfully!');
+            } catch (err) {
+                alert('Error starting scan');
+            } finally {
+                btn.classList.remove('loading');
+            }
+        });
+    </script>
+</body>
+
+</html>

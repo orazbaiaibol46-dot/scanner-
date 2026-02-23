@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Word Statistics{% endblock %}
+
+{% block content %}
+<div class="glass-card p-8 rounded-2xl shadow-sm mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h3 class="text-2xl font-bold text-gray-800">Most Frequent Words</h3>
+            <p class="text-gray-500">Analysis of the last 100 most frequent words across all scanned channels</p>
+        </div>
+        <div class="flex gap-2">
+            <span class="badge badge-primary">{{ words|length }} Unique Words</span>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+                <tr class="bg-gray-50">
+                    <th class="rounded-l-xl">Word</th>
+                    <th>Frequency</th>
+                    <th>Keyword Group</th>
+                    <th class="rounded-r-xl">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if words %}
+                {% for item in words %}
+                <tr class="hover:bg-blue-50 transition-colors">
+                    <td>
+                        <span class="font-semibold text-blue-600">{{ item.word }}</span>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <progress class="progress progress-primary w-20" value="{{ item.count }}"
+                                max="{{ words[0].count }}"></progress>
+                            <span class="badge badge-ghost">{{ item.count }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-outline badge-sm">{{ item.keyword_id }}</span>
+                    </td>
+                    <td>
+                        <a href="/search?q={{ item.word }}" class="btn btn-xs btn-ghost text-blue-500">
+                            <i class="fa-solid fa-search mr-1"></i> Search
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-12">
+                        <i class="fa-solid fa-chart-line text-4xl text-gray-200 mb-4 block"></i>
+                        <span class="text-gray-400">No word data available yet. Please run a scan.</span>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

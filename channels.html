@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Discovered Channels{% endblock %}
+
+{% block content %}
+<div class="glass-card p-6 rounded-2xl shadow-sm mb-6">
+    <div class="flex flex-wrap gap-4 items-center justify-between">
+        <h3 class="text-xl font-semibold">Channels Explorer</h3>
+        <div class="flex gap-2">
+            <div class="badge badge-info gap-2 flex py-4 px-4 font-semibold uppercase text-xs">
+                Total: {{ channels|length }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="overflow-x-auto glass-card rounded-2xl shadow-sm">
+    <table class="table w-full">
+        <thead>
+            <tr class="bg-gray-100">
+                <th>Channel Name</th>
+                <th>Username</th>
+                <th>Subscribers</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Latest Scan</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if channels %}
+            {% for channel in channels %}
+            <tr class="hover">
+                <td>
+                    <div class="font-bold">{{ channel.channel_name }}</div>
+                    <div class="text-xs opacity-50">{{ channel.keyword_ref.keyword if channel.keyword_ref else 'Manual'
+                        }}</div>
+                </td>
+                <td>
+                    <span class="text-blue-600">@{{ channel.username or 'private' }}</span>
+                </td>
+                <td>
+                    <div class="badge badge-ghost">{{ channel.subscribers_count }}</div>
+                </td>
+                <td>
+                    {% if channel.phone_number %}
+                    <span class="text-emerald-600 font-mono text-xs">{{ channel.phone_number }}</span>
+                    {% else %}
+                    <span class="text-gray-300">-</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if channel.location %}
+                    <span class="badge badge-sm badge-outline badge-primary">{{ channel.location }}</span>
+                    {% else %}
+                    <span class="text-gray-300">-</span>
+                    {% endif %}
+                </td>
+                <td class="text-xs text-gray-500">
+                    {{ channel.scanned_at.strftime('%Y-%m-%d %H:%M') }}
+                </td>
+                <td>
+                    <a href="{{ channel.channel_url }}" target="_blank"
+                        class="btn btn-circle btn-ghost btn-sm text-blue-500">
+                        <i class="fa-solid fa-external-link"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-12">
+                    <div class="flex flex-col items-center text-gray-400">
+                        <i class="fa-solid fa-search text-4xl mb-2"></i>
+                        <p>No channels found yet. Try scanning some keywords.</p>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

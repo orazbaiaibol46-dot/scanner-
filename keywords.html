@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Keyword Management{% endblock %}
+
+{% block content %}
+<div class="glass-card p-6 rounded-2xl shadow-sm max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-semibold">Keywords Pool</h3>
+        <div class="flex gap-2">
+            <input type="text" id="newKeyword" placeholder="Enter keyword..."
+                class="input input-bordered w-full max-w-xs shadow-sm" />
+            <button id="addBtn" class="btn btn-primary">
+                Add
+            </button>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Keyword</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="keywordList">
+                {% for kw in keywords %}
+                <tr id="kw-{{ kw.id }}">
+                    <td>{{ kw.id }}</td>
+                    <td class="font-medium">{{ kw.keyword }}</td>
+                    <td>
+                        <div
+                            class="badge {% if kw.status == 'active' %}badge-success{% else %}badge-ghost{% endif %} badge-sm">
+                            {{ kw.status }}
+                        </div>
+                    </td>
+                    <td class="text-sm text-gray-500">{{ kw.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <button onclick="deleteKeyword({{ kw.id }})"
+                            class="btn btn-square btn-ghost btn-sm text-red-500">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('addBtn').addEventListener('click', async () => {
+        const input = document.getElementById('newKeyword');
+        const keyword = input.value.trim();
+        if (!keyword) return;
+
+        const response = await fetch('/api/keywords', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keyword })
+        });
+
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert('Error adding keyword');
+        }
+    });
+
+    async function deleteKeyword(id) {
+        if (!confirm('Are you sure?')) return;
+        const response = await fetch(`/api/keywords/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            document.getElementById(`kw-${id}`).remove();
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="mb-8 p-6 glass-card rounded-2xl">
+    <form action="/search" method="get" class="flex gap-4">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search messages or channels..."
+                class="input input-bordered w-full pl-12 focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button type="submit" class="btn btn-primary px-8">Search</button>
+    </form>
+</div>
+
+{% if query %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Messages Search Results -->
+    <div class="lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold flex items-center">
+                <i class="fa-solid fa-message mr-2 text-blue-500"></i> Messages
+                <span class="ml-2 badge badge-ghost">{{ messages|length }} results</span>
+            </h3>
+        </div>
+
+        <div class="space-y-4">
+            {% if messages %}
+            {% for msg in messages %}
+            <div class="glass-card p-6 rounded-2xl hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-hashtag text-blue-400 mr-2"></i>
+                        <span class="font-bold text-gray-800">{{ msg.channel_ref.channel_name }}</span>
+                    </div>
+                    <span class="text-xs text-gray-400">{{ msg.date.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <p class="text-gray-700 leading-relaxed">{{ msg.text }}</p>
+                <div class="mt-4 flex gap-2">
+                    <a href="{{ msg.channel_ref.channel_url }}" target="_blank"
+                        class="btn btn-xs btn-outline btn-primary">
+                        <i class="fa-brands fa-telegram mr-1"></i> Open Channel
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="glass-card p-12 rounded-2xl text-center">
+                <i class="fa-solid fa-face-frown text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No messages found matching "{{ query }}"</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Channels Search Results -->
+    <div>
+        <h3 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fa-solid fa-broadcast-tower mr-2 text-green-500"></i> Channels
+            <span class="ml-2 badge badge-ghost">{{ channels|length }}</span>
+        </h3>
+
+        <div class="space-y-4">
+            {% if channels %}
+            {% for ch in channels %}
+            <div class="glass-card p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                <div class="font-bold text-gray-800 mb-1">{{ ch.channel_name }}</div>
+                <p class="text-xs text-gray-500 mb-3 truncate">{{ ch.description }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">@{{ ch.username }}</span>
+                    <a href="{{ ch.channel_url }}" target="_blank" class="text-blue-500 hover:underline text-xs">View <i
+                            class="fa-solid fa-external-link text-[10px]"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="glass-card p-6 rounded-xl text-center">
+                <p class="text-sm text-gray-400">No channels found</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="flex flex-col items-center justify-center py-20">
+    <i class="fa-solid fa-magnifying-glass text-6xl text-gray-200 mb-6"></i>
+    <h3 class="text-2xl font-bold text-gray-400">Ready to search</h3>
+    <p class="text-gray-400 mt-2">Enter keywords above to scan through collected data</p>
+</div>
+{% endif %}
+{% endblock %}

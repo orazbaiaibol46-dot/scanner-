@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Stat Cards -->
+    <div class="glass-card p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="bg-blue-100 p-3 rounded-xl text-blue-600 mr-4">
+                <i class="fa-solid fa-tags text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Total Keywords</p>
+                <p class="text-2xl font-bold">{{ stats.total_keywords }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
+        <div class="flex items-center">
+            <div class="bg-green-100 p-3 rounded-xl text-green-600 mr-4">
+                <i class="fa-solid fa-broadcast-tower text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Channels Found</p>
+                <p class="text-2xl font-bold">{{ stats.total_channels }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card p-6 rounded-2xl shadow-sm border-l-4 border-purple-500">
+        <div class="flex items-center">
+            <div class="bg-purple-100 p-3 rounded-xl text-purple-600 mr-4">
+                <i class="fa-solid fa-phone text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">With Phone</p>
+                <p class="text-2xl font-bold">{{ stats.channels_with_phone }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card p-6 rounded-2xl shadow-sm border-l-4 border-orange-500">
+        <div class="flex items-center">
+            <div class="bg-orange-100 p-3 rounded-xl text-orange-600 mr-4">
+                <i class="fa-solid fa-location-dot text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">With Location</p>
+                <p class="text-2xl font-bold">{{ stats.channels_with_location }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Recent Activity -->
+    <div class="lg:col-span-2 glass-card p-6 rounded-2xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fa-solid fa-clock-rotate-left mr-2 text-gray-400"></i> Recent Scan Logs
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Message</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if recent_logs %}
+                    {% for log in recent_logs %}
+                    <tr>
+                        <td>
+                            <span
+                                class="badge {% if log.status == 'success' %}badge-success{% else %}badge-error{% endif %} badge-sm">
+                                {{ log.status }}
+                            </span>
+                        </td>
+                        <td class="text-sm">{{ log.message }}</td>
+                        <td class="text-xs text-gray-500">{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-gray-400">No logs yet. Click Scan to start.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Words -->
+    <div class="glass-card p-6 rounded-2xl shadow-sm">
+        <h3 class="text-xl font-semibold mb-4 flex items-center text-blue-600">
+            <i class="fa-solid fa-chart-bar mr-2 text-blue-400"></i> Top Frequent Words
+        </h3>
+        <div class="space-y-4">
+            {% if top_words %}
+            {% for item in top_words %}
+            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                <span class="font-medium text-gray-700">{{ item.word }}</span>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-primary badge-outline">{{ item.count }}</span>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center py-8">
+                <i class="fa-solid fa-hourglass-start text-gray-300 text-3xl mb-2"></i>
+                <p class="text-sm text-gray-400">No data yet. Run a scan to find keywords.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="mt-8 border-t pt-6">
+            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Quick Links</h4>
+            <a href="/keywords"
+                class="btn btn-outline border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white w-full mb-3">
+                Manage Keywords
+            </a>
+            <a href="/channels" class="btn btn-primary bg-blue-600 border-0 text-white hover:bg-blue-700 w-full">
+                View Channels
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
