@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlmodel
+telethon
+python-dotenv
+pydantic
+pydantic-settings
+python-multipart
+psycopg2-binary
